@@ -1,5 +1,6 @@
 # TiledMapLoader
 Luci's Tiled Map Loader
+
 Tiled map loader for Love2D that stays out of your way! No frills!
 
 ## Usage
