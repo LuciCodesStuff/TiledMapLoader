@@ -16,8 +16,14 @@
     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ]]--
 
-local Object = require "classic" -- Todo-Remove this requirement
-local Tilemap = Object:extend()
+local Tilemap = {}
+Tilemap.__index = Tilemap
+
+setmetatable(Tilemap, {
+    __call = function(cls, ...)
+        return cls:new(...)
+    end,
+})
 
 -- Tilemap:new(map, options) Contructs a new Tilemap object
 -- map = Tilemap(require "mapfile")
@@ -25,6 +31,7 @@ local Tilemap = Object:extend()
 --@param options.scale X and Y scale, {x, y}
 --@return nothing
 function Tilemap:new(map, options)
+    local self = setmetatable({}, Tilemap)
     if options == nil then options = {} end
     local scale = options.scale or {1,1} -- If you need to scale the canvases
     self.map = map -- Seems like the best place for this to live
@@ -49,6 +56,7 @@ function Tilemap:new(map, options)
     for i = 1, #self.map.layers do
         self.canvases[i] = love.graphics.newCanvas(self.map.width * self.map.tilewidth * scale[1], self.map.height * self.map.tileheight * scale[2])
     end
+    return self
 end
 
 -- Tilemap:render() Renders layers to canvases for drawing
