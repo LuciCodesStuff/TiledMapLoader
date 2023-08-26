@@ -103,12 +103,13 @@ end
 --@param n One or more layers
 --@return nothing
 function Tilemap:drawLayers(...)
-    local arg = {...}
+    local args = {...}
     love.graphics.setBlendMode("alpha", "premultiplied")
     love.graphics.setColor(1,1,1,1)
-    for i in pairs(arg) do
-        local canvases = self.canvases[i]
-        local layer = self.map.layers[i]
+    for i in pairs(args) do
+        local arg = args[i]
+        local canvas = self.canvases[arg]
+        local layer = self.map.layers[arg]
         love.graphics.draw(canvas, layer.x, layer.y)
     end
     love.graphics.setBlendMode("alpha")
