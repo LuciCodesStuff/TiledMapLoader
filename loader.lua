@@ -34,6 +34,8 @@ function Tilemap:new(map, options)
     local self = setmetatable({}, Tilemap)
     if options == nil then options = {} end
     local scale = options.scale or {1,1} -- If you need to scale the canvases
+    local directory = options.directory or ""
+    if directory ~= "" then directory = directory .. "/" end
     self.map = map -- Seems like the best place for this to live
     self.canvases = {} -- Home for canvases, lines up with layers
     self.quads = {} -- Home for quads, lines up with tilemaps
@@ -42,7 +44,8 @@ function Tilemap:new(map, options)
     -- Init tilesets and quads
     for i = 1, #self.map.tilesets do
         local tileset = self.map.tilesets[i]
-        self.imageMaps[i] = love.graphics.newImage(tileset.image)
+        print(directory .. tileset.image)
+        self.imageMaps[i] = love.graphics.newImage(directory .. tileset.image)
         local imageMap = self.imageMaps[i] -- [i] can't be nil, so the image was set first
         
         for y = 0, tileset.imageheight - tileset.tileheight, tileset.tileheight do

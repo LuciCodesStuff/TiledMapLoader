@@ -13,6 +13,11 @@ Create a map object, apply scaling multiplier: (This will fix incorrectly sized 
     tilemap = Tilemap(require "mapfile", {scale = {2, 2}})
 ```
 
+Create a map object that lives in a subdirectory: (This will correct issues where the map file lives in another directory but the tileset data is unaware)
+```lua
+    tilemap = Tilemap(require "directory.mapfile", {directory = "directory" })
+```
+
 Render the layers:
 ```lua
     tilemap:render()
