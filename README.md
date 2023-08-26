@@ -8,6 +8,10 @@ Create a map object:
 ```lua
     tilemap = Tilemap(require "mapfile")
 ```
+Create a map object, apply scaling multiplier: (This will fix incorrectly sized canvases when scaling)
+```lua
+    tilemap = Tilemap(require "mapfile", {scale = {2, 2}})
+```
 
 Render the layers:
 ```lua
@@ -24,9 +28,11 @@ Draw specific layers, or change order:
     tilemap:drawLayers(1,4,3)
 ```
 
-Modify a layer property:
+Modify layer properties:
 ```lua
-    tilemap.map.layers[1].visible = false
+    local layer = tilemap.map.layers[2]
+    layer.visible = true
+    layer.x = layer.x + layer.parallaxx * dt
 ```
 
 ## Example
@@ -38,6 +44,10 @@ function love.load()
 end
 
 function love.update(dt)
+    ...
+    local layer = tilemap.map.layers[2]
+    layer.visible = true
+    layer.x = layer.x + layer.parallaxx * dt
     ...
 end
 

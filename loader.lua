@@ -1,4 +1,5 @@
--- Luci's Tiled Map Loader - 2023 - MIT - Be nice!
+--[[ Luci's Tiled Map Loader - 2023 - MIT - Be nice!! ]]--
+--[[ https://github.com/LuciCodesStuff/TiledMapLoader ]]--
 --[[
     Tiled map loader for Love2D that stays out of your way! No frills!
     Read the code for documentation.
