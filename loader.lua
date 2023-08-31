@@ -41,6 +41,11 @@ function Tilemap:new(map, options)
     self.quads = {} -- Home for quads, lines up with tilemaps
     self.imageMaps = {} -- home for tilemap imagemaps, lines up with tilemaps
 
+    -- Other references for quick and easy access
+    self.layers = self.map.layers
+    self.layersByName = {} -- Setup below
+    self.canvasesByName = {}
+
     -- Init tilesets and quads
     for i = 1, #self.map.tilesets do
         local tileset = self.map.tilesets[i]
@@ -55,10 +60,18 @@ function Tilemap:new(map, options)
         end
     end
 
-    --Init canvases, scale if required
+    
     for i = 1, #self.map.layers do
+        local layer = self.map.layers[i]
+        -- Init canvases, scale if required
         self.canvases[i] = love.graphics.newCanvas(self.map.width * self.map.tilewidth * scale[1], self.map.height * self.map.tileheight * scale[2])
+        local canvas = self.canvases[i]
+        -- Setup references
+        self.layersByName[layer.name] = layer
+        self.canvasesByName[layer.name] = canvas
     end
+
+    
     return self
 end
 
@@ -73,14 +86,23 @@ function Tilemap:render()
         love.graphics.setColor(1,1,1,1)
         love.graphics.clear()
         if layer.visible then
-            for j in pairs(layer.data) do
-                local data = layer.data[j]
-                if data ~= 0 then
-                    local tileset, imageMap = self:gidmap(data)
-                    local quadIndex = data - tileset.firstgid + 1
-                    local x = ((j - 1) % layer.width) * tileset.tilewidth
-                    local y = math.floor((j - 1) / layer.width) * tileset.tileheight
-                    love.graphics.draw(imageMap, self.quads[quadIndex], x, y)
+            if layer.type == "tilelayer" then
+                for j in pairs(layer.data) do
+                    local data = layer.data[j]
+                    if data ~= 0 then
+                        local tileset, imageMap = self:gidmap(data)
+                        local quadIndex = data - tileset.firstgid + 1
+                        local x = ((j - 1) % layer.width) * tileset.tilewidth
+                        local y = math.floor((j - 1) / layer.width) * tileset.tileheight
+                        love.graphics.draw(imageMap, self.quads[quadIndex], x, y)
+                    end
+                end
+            elseif layer.type == "objectgroup" then
+                for j in pairs(layer.objects) do
+                    local object = layer.objects[j]
+                    if object.shape == "rectangle" then
+                        love.graphics.rectangle("line", object.x, object.y, object.width, object.height)
+                    end
                 end
             end
         end
@@ -115,6 +137,17 @@ function Tilemap:drawLayers(...)
         local layer = self.map.layers[arg]
         love.graphics.draw(canvas, layer.x, layer.y)
     end
+    love.graphics.setBlendMode("alpha")
+end
+
+-- Tilemap:drawByName() Draws the specific layer, by name
+--@return nothing
+function Tilemap:drawByName(name)
+    love.graphics.setBlendMode("alpha", "premultiplied")
+    love.graphics.setColor(1,1,1,1)
+    local canvas = self.canvasesByName[name]
+    local layer = self.layersByName[name]
+    love.graphics.draw(canvas, layer.x, layer.y)
     love.graphics.setBlendMode("alpha")
 end
 
